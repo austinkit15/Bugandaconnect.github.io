@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@100;200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+
+    <style>
+   
+        .chat-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+        }
+        .chat-box {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #13274F;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f7f9fc;
+        }
+        .message {
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+        .message.sent {
+            background-color: blue;
+            color: white;
+            text-align: right;
+        }
+        .message.received {
+            background-color: #e0e0e0;
+            text-align: left;
+        }
+        input[type="text"] {
+            width: calc(100% - 50px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: blue;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="logo"><img src="logo1.png" alt=""></a>
+        <ul class="navmenu">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="resources.html">Resources</a></li>
+            <li><a href="content-gallery.html">Content Gallery</a></li>
+            <li><a href="Chat.html">Chat</a></li>
+        </ul>
+        <div class="nav-icon">
+            <a href="#"><i class='bx bx-search'></i></a>
+            <a href="#"><i class='bx bx-user' ></i></a>
+            <div class="bx bx-menu" id="menu-icon"></div>
+        </div>
+    </header>
+
+    <section class="main-home">
+        <div class="main-text">
+            <h5>Chat With One Another</h5>
+            <p>Welcome to the chat page. Where each muganda connects with each other. No matter how far you are!</p>
+        </div>
+    </section>
+
+    <section class="trending-product" id="trending">
+        <div class="center-text">
+            <h2>Start <span>Chatting</span></h2>
+        </div>
+       
+        <div class="chat-container">
+            <div class="chat-box" id="chat-box"></div>
+            <input type="text" id="message-input" placeholder="Type your message..." />
+            <button id="send-button">Send</button>
+        </div>
+    </section>
+
+
+    <script type="module">
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+        import { getDatabase, ref, set, onChildAdded, push } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
+
+    
+        const firebaseConfig = {
+            apiKey: "AIzaSyD0Kmz-GKN9_Ws5Dcb3nDqAWSIXF2Ajtpw",
+            authDomain: "buganda-connect-chat.firebaseapp.com",
+            projectId: "buganda-connect-chat",
+            storageBucket: "buganda-connect-chat.appspot.com",
+            messagingSenderId: "1037010905727",
+            appId: "1:1037010905727:web:145e263d120dbf84002d4a",
+            measurementId: "G-RT08J8D7DZ"
+        };
+
+     
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+ 
+        const messagesRef = ref(db, 'messages/');
+        const chatBox = document.getElementById('chat-box');
+        const messageInput = document.getElementById('message-input');
+        const sendButton = document.getElementById('send-button');
+
+    
+        sendButton.addEventListener('click', () => {
+            const messageText = messageInput.value.trim();
+            if (messageText) {
+                const newMessageRef = push(messagesRef);
+                set(newMessageRef, {
+                    text: messageText,
+                    timestamp: Date.now()
+                });
+                messageInput.value = ''; 
+            }
+        });
+
+
+        onChildAdded(messagesRef, (data) => {
+            const message = data.val();
+            const messageElement = document.createElement('div');
+            messageElement.className = 'message received'; 
+            messageElement.textContent = message.text;
+            chatBox.appendChild(messageElement);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+    </script>
+        <script src="java.js"></script>
+</body>
+</html>
